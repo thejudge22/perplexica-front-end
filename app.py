@@ -32,8 +32,6 @@ else:
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-# Explicitly set the app logger level to DEBUG
-app.logger.setLevel(logging.DEBUG)
 
 # --- Credentials ---
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
@@ -100,8 +98,6 @@ def login_required(view):
 
 def call_perplexica_api(query: str) -> dict | None:
     """Sends query to Perplexica API and returns the parsed JSON response."""
-    # Add INFO log here to confirm function entry
-    app.logger.info(f"Entering call_perplexica_api function for query: '{query[:50]}...'") # Log first 50 chars
 
     if not PERPLEXICA_API_URL:
         app.logger.error("Perplexica API URL is not configured.")
@@ -132,17 +128,13 @@ def call_perplexica_api(query: str) -> dict | None:
         payload["chatModel"]["customOpenAIKey"] = PERPLEXICA_CUSTOM_OPENAI_KEY
 
     app.logger.info(f"Sending query to Perplexica API: {PERPLEXICA_API_URL}")
-    # Log payload at DEBUG level with indentation
-    app.logger.debug(f"Perplexica Request Payload: {json.dumps(payload, indent=2)}")
 
     try:
         response = requests.post(PERPLEXICA_API_URL, headers=headers, json=payload, timeout=120) # Increased timeout for potentially long searches
-        # Remove duplicate raise_for_status call
         response.raise_for_status() # Raise HTTPError for bad responses (4xx or 5xx)
 
         response_data = response.json()
         app.logger.info("Successfully received response from Perplexica API.")
-        app.logger.debug(f"Perplexica Response Data: {json.dumps(response_data)}") # Log response for debugging
         return response_data
 
     except RequestException as e:
