@@ -352,6 +352,22 @@ def index():
             message = perplexica_response.get('message', 'No message content received.')
             sources = perplexica_response.get('sources', []) # Default to empty list
 
+            # --- Format sources for Karakeep ---
+            formatted_sources_text = ""
+            if sources:
+                formatted_sources_text += "\n\nSources:\n"
+                for index, source in enumerate(sources):
+                    # Correctly access the URL nested within the 'metadata' dictionary
+                    metadata = source.get('metadata', {}) # Get the metadata dict, default to empty dict if missing
+                    url = metadata.get('url', 'No URL provided') # Get the url from metadata, default if missing
+                    # Use index + 1 for numbering consistent with potential [1], [2] references
+                    formatted_sources_text += f"{index + 1}. {url}\n"
+
+            # Combine original message with formatted sources for Karakeep
+            karakeep_text_content = message + formatted_sources_text
+            # --- End formatting ---
+
+
             # Send to Karakeep if enabled and successful
             karakeep_sent_ok = None
             if session.get('send_to_karakeep_enabled'):
@@ -361,7 +377,7 @@ def index():
                     if karakeep_list_id:
                         karakeep_sent_ok = send_result_to_karakeep(
                             KARAKEEP_API_URL, KARAKEEP_API_KEY, karakeep_list_id,
-                            query, message # Send query as title, message as body
+                            query, karakeep_text_content # Pass combined text here
                         )
                         if karakeep_sent_ok:
                             app.logger.info(f"Successfully sent result for query '{query}' to Karakeep list '{KARAKEEP_LIST_NAME}'.")
