@@ -1,6 +1,6 @@
 # Perplexica Frontend
 
-A simple Flask-based web frontend to interact with a [Perplexica]((https://github.com/ItzCrazyKns/Perplexica)) API instance. It allows users to submit queries, view results (including sources), and optionally send results to a [Karakeep](https://github.com/karakeep-app/karakeep) instance.
+A simple Flask-based web frontend to interact with a [Perplexica](https://github.com/ItzCrazyKns/Perplexica) API instance. It allows users to submit queries, view results (including sources), and optionally send results to a [Karakeep](https://github.com/karakeep-app/karakeep) instance.
 
 ## Features
 
