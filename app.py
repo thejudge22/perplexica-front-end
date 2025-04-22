@@ -149,13 +149,22 @@ def call_perplexica_api(query: str) -> dict | None:
         app.logger.error(f"Error calling Perplexica API ({PERPLEXICA_API_URL}): {e}")
         error_details = "Network error or Perplexica API unreachable."
         if e.response is not None:
+            # Log the status code and attempt to log the response body
             error_details = f"Status Code: {e.response.status_code}. "
             try:
+                # Try parsing JSON first
                 error_json = e.response.json()
                 error_details += f"Response: {json.dumps(error_json)}"
+                # Log the detailed error response at the ERROR level for visibility
+                app.logger.error(f"Perplexica API Error Response Body (JSON): {json.dumps(error_json)}")
             except json.JSONDecodeError:
-                error_details += f"Raw Response: {e.response.text[:500]}" # Log raw text if not JSON
-        flash(f"Error communicating with Perplexica API: {error_details}", "error")
+                # If not JSON, log the raw text
+                raw_response = e.response.text[:500] # Limit length
+                error_details += f"Raw Response: {raw_response}"
+                # Log the detailed error response at the ERROR level for visibility
+                app.logger.error(f"Perplexica API Error Response Body (Raw Text): {raw_response}")
+        # Flash a user-friendly message, potentially less detailed than the log
+        flash(f"Error communicating with Perplexica API. Status: {e.response.status_code if e.response is not None else 'N/A'}. Check logs for details.", "error")
         return None
     except Exception as e:
         app.logger.error(f"Unexpected error processing Perplexica API call: {e}", exc_info=True)
