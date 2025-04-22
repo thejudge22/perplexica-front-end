@@ -6,3 +6,5 @@ Werkzeug>=2.0
 # Added for potential future use or consistency with summarizer
 beautifulsoup4>=4.9
 lxml>=4.6
+# Add Markdown library
+Markdown>=3.3

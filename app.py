@@ -3,6 +3,7 @@ import requests
 import logging
 import functools
 import json # For parsing JSON responses/errors
+import markdown # Import the markdown library
 from flask import Flask, request, render_template, abort, flash, get_flashed_messages, session, redirect, url_for
 from dotenv import load_dotenv
 from urllib.parse import urlparse
@@ -349,8 +350,12 @@ def index():
         perplexica_response = call_perplexica_api(query)
 
         if perplexica_response and 'message' in perplexica_response:
-            message = perplexica_response.get('message', 'No message content received.')
+            original_message = perplexica_response.get('message', 'No message content received.')
             sources = perplexica_response.get('sources', []) # Default to empty list
+
+            # Convert original message to HTML for display using markdown library
+            # Enable extensions like fenced code blocks and tables for better rendering
+            message_html = markdown.markdown(original_message, extensions=['fenced_code', 'tables', 'nl2br'])
 
             # --- Format sources for Karakeep ---
             formatted_sources_text = ""
@@ -363,8 +368,8 @@ def index():
                     # Use index + 1 for numbering consistent with potential [1], [2] references
                     formatted_sources_text += f"{index + 1}. {url}\n"
 
-            # Combine original message with formatted sources for Karakeep
-            karakeep_text_content = message + formatted_sources_text
+            # Combine ORIGINAL message (with raw markdown) with formatted sources for Karakeep
+            karakeep_text_content = original_message + formatted_sources_text
             # --- End formatting ---
 
 
@@ -377,7 +382,7 @@ def index():
                     if karakeep_list_id:
                         karakeep_sent_ok = send_result_to_karakeep(
                             KARAKEEP_API_URL, KARAKEEP_API_KEY, karakeep_list_id,
-                            query, karakeep_text_content # Pass combined text here
+                            query, karakeep_text_content # Pass combined text with RAW markdown here
                         )
                         if karakeep_sent_ok:
                             app.logger.info(f"Successfully sent result for query '{query}' to Karakeep list '{KARAKEEP_LIST_NAME}'.")
@@ -397,11 +402,11 @@ def index():
                  app.logger.info(f"Karakeep option is NOT enabled for query '{query}'.")
 
 
-            # Render results page
+            # Render results page, passing the HTML version of the message
             app.logger.info(f"Successfully processed query: '{query}'")
             return render_template('results.html',
                                    query=query,
-                                   message=message,
+                                   message_html=message_html, # Pass the HTML version here
                                    sources=sources,
                                    username=session.get('username'))
         else:

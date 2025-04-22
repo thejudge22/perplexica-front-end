@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
     <title>Perplexica Search Results</title>
     <style>
         body { font-family: sans-serif; line-height: 1.6; padding: 20px; max-width: 800px; margin: auto; }
@@ -22,6 +23,63 @@
         .back-link { display: inline-block; margin-top: 20px; text-decoration: none; background-color: #6c757d; color: white; padding: 8px 15px; border-radius: 4px; }
         .back-link:hover { background-color: #5a6268; }
         .error { color: #a94442; background-color: #f2dede; border: 1px solid #ebccd1; padding: 10px; margin-bottom: 15px; border-radius: 4px; }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #1e1e1e;
+                color: #cccccc;
+            }
+            .container {
+                background-color: #2d2d2d;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            }
+            h1 {
+                color: #eeeeee;
+            }
+            h2 {
+                 color: #bbbbbb;
+                 border-bottom-color: #555;
+            }
+            .logout-link {
+                color: #9ecbff; /* Adjust logout link color for dark mode */
+            }
+            .logout-link:hover {
+                text-decoration: underline;
+            }
+            .query-section {
+                background-color: #3c3c3c;
+                color: #bbbbbb;
+            }
+            .response-message {
+                background-color: #1d3f45; /* Darker blue background */
+                border-left-color: #0056b3; /* Darker blue border */
+                 color: #cccccc; /* Ensure text is readable */
+            }
+            .sources-list li {
+                background-color: #3c3c3c;
+                border-color: #555;
+            }
+            .sources-list li strong {
+                color: #eeeeee;
+            }
+            .sources-list li a {
+                color: #9ecbff; /* Adjust link color */
+            }
+             .sources-list li p {
+                color: #bbbbbb; /* Adjust snippet text color */
+             }
+            .back-link {
+                background-color: #5a6268;
+            }
+            .back-link:hover {
+                background-color: #495057;
+            }
+             .error {
+                color: #ffcccc;
+                background-color: #5a2d2d;
+                border-color: #7a3d3d;
+            }
+        }
     </style>
 </head>
 <body>
@@ -37,9 +95,9 @@
         </div>
 
         <h2>Response</h2>
-        {% if message %}
+        {% if message_html %}
             <div class="response-message">
-                {{ message }}
+                {{ message_html | safe }} {# Use the safe filter to render HTML #}
             </div>
         {% else %}
             <div class="error">Could not retrieve a valid response message from Perplexica.</div>
