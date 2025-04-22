@@ -1,0 +1,44 @@
+services:
+#   webserver:
+#     image: php:apache 
+#     ports:
+#       - "28580:80"
+#     volumes:
+#       - ./html:/var/www/html
+#     depends_on:
+#       - database 
+# 
+#   database:
+#     image: mariadb:latest 
+#     environment:
+#       MYSQL_ROOT_PASSWORD: root_password # Set root password for MariaDB
+#       MYSQL_DATABASE: lamp_db    #you can change the database name here
+#     volumes:
+#       - ./mysql_data:/var/lib/mysql 
+#       
+#   phpmyadmin:
+#     image: arm64v8/phpmyadmin
+#     ports:
+#       - "28581:80"    #this line maps your pc port to the container port
+#     depends_on:
+#       - database    #this line links this container to the db container
+#     environment:
+#       PMA_HOST: database      
+# Add the new Perplexica Frontend service
+  perplexica_frontend:
+    build:
+      context: ./perplexica_frontend # Path to the new frontend app directory
+      dockerfile: Dockerfile
+    container_name: perplexica_frontend_service
+    ports:
+      - "25008:5000" # Map host port 25002 to container port 5000 (avoid conflict with summarizer)
+    volumes:
+      # Mount local code for development (optional)
+      - ./perplexica_frontend:/app
+    env_file:
+      # Load environment variables from .env file in the perplexica_frontend directory
+      - ./perplexica_frontend/.env
+    restart: unless-stopped
+    # Add depends_on if the frontend needs another service (like a local Perplexica instance) to be running first
+    # depends_on:
+    #   - perplexica_backend # Example if you had a perplexica service defined here
