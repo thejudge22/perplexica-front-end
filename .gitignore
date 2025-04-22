@@ -1,2 +1,3 @@
 /web-summarizer
 .env
+.DS_Store

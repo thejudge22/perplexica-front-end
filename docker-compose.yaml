@@ -27,17 +27,17 @@ services:
 # Add the new Perplexica Frontend service
   perplexica_frontend:
     build:
-      context: ./perplexica_frontend # Path to the new frontend app directory
+      context: ./ # Path to the new frontend app directory
       dockerfile: Dockerfile
     container_name: perplexica_frontend_service
     ports:
       - "25008:5000" # Map host port 25002 to container port 5000 (avoid conflict with summarizer)
     volumes:
       # Mount local code for development (optional)
-      - ./perplexica_frontend:/app
+      - ./:/app
     env_file:
       # Load environment variables from .env file in the perplexica_frontend directory
-      - ./perplexica_frontend/.env
+      - ./.env
     restart: unless-stopped
     # Add depends_on if the frontend needs another service (like a local Perplexica instance) to be running first
     # depends_on:
