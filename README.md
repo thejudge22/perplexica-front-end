@@ -1,6 +1,6 @@
 # Perplexica Frontend
 
-A simple Flask-based web frontend to interact with a [Perplexica](https://github.com/perplexica/perplexica) API instance. It allows users to submit queries, view results (including sources), and optionally send results to a [Karakeep](https://github.com/karakeeper/karakeep)/[Hoarder](https://github.com/hoarder-app/hoarder) instance.
+A simple Flask-based web frontend to interact with a [Perplexica]((https://github.com/ItzCrazyKns/Perplexica)) API instance. It allows users to submit queries, view results (including sources), and optionally send results to a [Karakeep](https://github.com/karakeep-app/karakeep) instance.
 
 ## Features
 
@@ -13,10 +13,10 @@ A simple Flask-based web frontend to interact with a [Perplexica](https://github
 
 ## Prerequisites
 
-*   [Docker](https://docs.docker.com/get-docker/)
-*   [Docker Compose](https://docs.docker.com/compose/install/) (usually included with Docker Desktop)
-*   A running instance of the [Perplexica](https://github.com/perplexica/perplexica) backend API accessible from this frontend.
-*   (Optional) A running instance of [Karakeep](https://github.com/karakeeper/karakeep) or [Hoarder](https://github.com/hoarder-app/hoarder) if you want to use the "Send to Karakeep" feature.
+*   Docker
+*   Docker Compose (usually included with Docker Desktop)
+*   A running instance of the Perplexica backend API accessible from this frontend.
+*   (Optional) A running instance of Karakeep if you want to use the "Send to Karakeep" feature.
 
 ## Configuration
 
