@@ -14,6 +14,26 @@
         h2 { color: #555; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 30px;}
         .query-section { background-color: #e9ecef; padding: 10px 15px; border-radius: 4px; margin-bottom: 20px; font-style: italic; color: #495057; }
         .response-message { background-color: #e9f5ff; padding: 15px; border-left: 4px solid #007bff; margin-bottom: 20px; border-radius: 0 4px 4px 0; white-space: pre-wrap; /* Preserve whitespace and line breaks */ }
+
+        /* Reduce spacing for elements inside the response */
+        .response-message h1, .response-message h2, .response-message h3, .response-message h4, .response-message h5, .response-message h6 {
+            margin-top: 0.8em; /* Reduced top margin */
+            margin-bottom: 0.4em; /* Reduced bottom margin */
+        }
+        .response-message p {
+            margin-top: 0.5em; /* Reduced top margin */
+            margin-bottom: 0.5em; /* Reduced bottom margin */
+        }
+        .response-message ul, .response-message ol {
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+            padding-left: 20px; /* Keep standard indentation */
+        }
+        .response-message li {
+            margin-bottom: 0.2em; /* Slightly reduce space between list items */
+        }
+        /* --- End reduced spacing --- */
+
         .sources-list { list-style: none; padding-left: 0; }
         .sources-list li { background-color: #f1f1f1; margin-bottom: 10px; padding: 10px 15px; border-radius: 4px; border: 1px solid #ddd; font-size: 0.9em; }
         .sources-list li strong { display: block; margin-bottom: 5px; color: #333; }
@@ -55,6 +75,28 @@
                 border-left-color: #0056b3; /* Darker blue border */
                  color: #cccccc; /* Ensure text is readable */
             }
+            /* Reduce spacing for elements inside the response for dark mode */
+            .response-message h1, .response-message h2, .response-message h3, .response-message h4, .response-message h5, .response-message h6 {
+                margin-top: 0.8em; /* Reduced top margin */
+                margin-bottom: 0.4em; /* Reduced bottom margin */
+                color: #dddddd; /* Ensure heading color is visible */
+                /* Optional: border-bottom: 1px solid #444; */
+            }
+            .response-message p {
+                margin-top: 0.5em; /* Reduced top margin */
+                margin-bottom: 0.5em; /* Reduced bottom margin */
+            }
+             /* Adjust list spacing inside the response for dark mode */
+            .response-message ul, .response-message ol {
+                margin-top: 0.5em;
+                margin-bottom: 0.5em;
+                padding-left: 20px;
+            }
+            .response-message li {
+                margin-bottom: 0.2em; /* Slightly reduce space between list items */
+            }
+            /* --- End reduced spacing --- */
+
             .sources-list li {
                 background-color: #3c3c3c;
                 border-color: #555;
