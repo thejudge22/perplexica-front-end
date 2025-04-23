@@ -4,6 +4,8 @@ import logging
 import functools
 import json # For parsing JSON responses/errors
 import markdown # Import the markdown library
+import re # Import regex module
+import html # Import html module for escaping
 from flask import Flask, request, render_template, abort, flash, get_flashed_messages, session, redirect, url_for
 from dotenv import load_dotenv
 from urllib.parse import urlparse
@@ -356,6 +358,65 @@ def index():
             # Convert original message to HTML for display using markdown library
             # Enable extensions like fenced code blocks and tables for better rendering
             message_html = markdown.markdown(original_message, extensions=['fenced_code', 'tables', 'nl2br'])
+
+            # Process HTML to make citations clickable links to sources
+            source_link_map = {}
+            matches_to_process = [] # Store {'start': int, 'end': int, 'content': str, 'original': str}
+
+            if sources and isinstance(sources, list):
+                # Step 1: Build a map of source index to its HTML link
+                for i in range(len(sources)): # Iterate normally for map creation
+                    source_index = i + 1 # 1-based index for citation
+                    source_data = sources[i]
+                    metadata = source_data.get('metadata', {})
+                    url = metadata.get('url')
+
+                    if url:
+                        escaped_url = html.escape(url)
+                        # Store the full link HTML in the map: <a href="#source-N" title="URL">[N]</a>
+                        source_link_map[source_index] = f'<a href="#source-{source_index}" title="{escaped_url}">[{source_index}]</a>'
+
+                # Step 2: Find all citation groups and their positions using finditer
+                # Regex finds digits, commas, and spaces within square brackets
+                for match in re.finditer(r'\[([\d,\s]+)\]', message_html):
+                    start, end = match.span()
+                    group_content = match.group(1) # Content inside brackets (e.g., "1, 2")
+                    original_full_match = match.group(0) # Full match (e.g., "[1, 2]")
+                    matches_to_process.append({'start': start, 'end': end, 'content': group_content, 'original': original_full_match})
+
+                # Step 3: Process matches in reverse order of position to avoid index issues during replacement
+                for match_info in sorted(matches_to_process, key=lambda x: x['start'], reverse=True):
+                    group_content = match_info['content']
+                    original_group_string = match_info['original'] # e.g., "[1, 2]"
+
+                    # Extract individual numbers from the group content (e.g., "2, 3" -> [2, 3])
+                    try:
+                        # Ensure we only parse digits, handling potential extra spaces
+                        numbers_in_group = [int(num.strip()) for num in group_content.split(',') if num.strip().isdigit()]
+                    except ValueError:
+                        app.logger.warning(f"Could not parse numbers in citation group: {original_group_string} at position {match_info['start']}")
+                        continue # Skip malformed groups
+
+                    if not numbers_in_group: # Skip if no valid numbers found (e.g., "[]" or "[ , ]")
+                         continue
+
+                    # Step 4: Build the replacement string parts (links or plain numbers)
+                    linked_parts = []
+                    for num in numbers_in_group:
+                        if num in source_link_map:
+                            # Append the full link HTML, which already contains [num]
+                            linked_parts.append(source_link_map[num])
+                        else:
+                            # Append just the number as a string if no link exists
+                            linked_parts.append(str(num))
+
+                    # Join the parts (individual links like <a href...>[N]</a>) directly without commas or outer brackets
+                    new_linked_string = "".join(linked_parts)
+
+                    # Step 5: Replace the original slice with the new linked string using indices
+                    start_index = match_info['start']
+                    end_index = match_info['end']
+                    message_html = message_html[:start_index] + new_linked_string + message_html[end_index:]
 
             # --- Format sources for Karakeep ---
             formatted_sources_text = ""

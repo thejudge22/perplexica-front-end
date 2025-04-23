@@ -149,7 +149,8 @@
             <h2>Sources</h2>
             <ul class="sources-list">
                 {% for source in sources %}
-                    <li>
+                    {# Add id using loop.index (1-based) to match citation links #}
+                    <li id="source-{{ loop.index }}">
                         {% if source.metadata and source.metadata.title %}
                             <strong>{{ source.metadata.title }}</strong>
                         {% else %}
